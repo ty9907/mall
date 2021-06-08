@@ -134,7 +134,7 @@ docker run -p 3306:3306 --name mysql -v /mydata/mysql/log:/var/log/mysql -v /myd
 
 ```shell
 #默认没有这个文件
-vi /mydata/mysql/conf/mysql.cnf
+vi /mydata/mysql/conf/my.cnf
 
 #将下面内容复制到mysql.cnf中
 [client]
@@ -151,10 +151,17 @@ collation-server=utf8_unicode_ci
 skip-character-set-client-handshake
 skip-name-resolve
 
+#查询表明忽略大小写
+lower_case_table_names=1
+```
 
-#然后重启mysql镜像
+然后重启mysql镜像
+
+``` shell
 docker restart mysql
 ```
+
+
 
 ## 5、docker启动redis指令
 
@@ -173,6 +180,13 @@ appendonly yes
 
 #进入docker中redis客户端控制台（最新版redis已经默认支持持久化，不需要添加下列配置）
 docker exec -it redis redis-cli
+```
+
+##  6、docker设置容器自动重启
+
+```shell
+docker update mysql --restart=always
+docker update redis --restart=always
 ```
 
 
