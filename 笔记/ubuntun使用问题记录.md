@@ -18,8 +18,7 @@ sudo rm /var/lib/dpkg/lock
 sudo apt-get update`
 
 2、安装包允许apt-get 通过http使用仓库
-sudo apt-get install apt-transport-https ca-certificates
-curl software-properties-common
+sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
 
 3、添加docker官方 GPG key
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
