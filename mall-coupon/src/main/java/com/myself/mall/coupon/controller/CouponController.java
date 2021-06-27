@@ -34,9 +34,8 @@ public class CouponController {
     @Autowired
     private CouponService couponService;
 
-
     @Value("${coupon.user.name}")
-    private String userName;
+    public String userName;
 
     @RequestMapping("/test")
     public R test(){
