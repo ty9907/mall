@@ -1,4 +1,4 @@
-package com.firenay.gateway.config;
+package com.myself.mall.gateway.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

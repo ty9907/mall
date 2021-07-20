@@ -1,7 +1,12 @@
 package com.myself.mall.product.service.impl;
 
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -22,8 +27,26 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
                 new Query<CategoryEntity>().getPage(params),
                 new QueryWrapper<CategoryEntity>()
         );
-
         return new PageUtils(page);
     }
 
+    @Override
+    public List<CategoryEntity> getListTree() {
+        //查询所有分类
+        List<CategoryEntity> list = baseMapper.selectList(null);
+        List<CategoryEntity> treeList = list.stream().filter(item -> item.getParentCid() == 0l).map(item -> {
+            item.setChildren(getChildren(item, list));
+            return item;
+        }).collect(Collectors.toList());
+        return treeList;
+    }
+
+    private List<CategoryEntity> getChildren(CategoryEntity item, List<CategoryEntity> list) {
+        List<CategoryEntity> children=new ArrayList<CategoryEntity>();
+        children = list.stream().filter(category -> category.getParentCid() == item.getCatId()).map(category -> {
+            category.setChildren(getChildren(category, list));
+            return category;
+        }).collect(Collectors.toList());
+        return children;
+    }
 }

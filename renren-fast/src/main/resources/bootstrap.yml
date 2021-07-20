@@ -1,6 +1,6 @@
 spring:
   application:
-    nema: mall-gateway
+    name: renren-fast
   cloud:
     nacos:
       config:

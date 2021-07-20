@@ -1,6 +1,6 @@
 spring:
   application:
-    name: kkmall-gateway
+    name: mall-gateway
   cloud:
     nacos:
       config:
