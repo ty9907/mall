@@ -1,5 +1,7 @@
 package com.myself.common.utils;
 
+import com.myself.common.exception.ExceptionCodeEnum;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,6 +31,19 @@ public class R extends HashMap<String, Object> {
 		R r = new R();
 		r.put("code", code);
 		r.put("msg", msg);
+		return r;
+	}
+
+	public static R error(ExceptionCodeEnum ex){
+		R r = new R();
+		r.put("code", ex.getCode());
+		r.put("msg", ex.getMsg());
+		return r;
+	}
+
+	public static R error(ExceptionCodeEnum ex, Map data){
+		R r = R.error(ex);
+		r.put("data",data);
 		return r;
 	}
 

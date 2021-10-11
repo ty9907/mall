@@ -51,7 +51,7 @@ public class CategoryController {
     public R listTree(@RequestParam Map<String, Object> params){
         List<CategoryEntity> page = categoryService.getListTree();
 
-        return R.ok().put("page", page);
+        return R.ok().put("data", page);
     }
 
     /**
@@ -61,6 +61,7 @@ public class CategoryController {
     //@RequiresPermissions("product:category:info")
     public R info(@PathVariable("catId") Long catId){
 		CategoryEntity category = categoryService.getById(catId);
+
 
         return R.ok().put("category", category);
     }
@@ -86,6 +87,17 @@ public class CategoryController {
 
         return R.ok();
     }
+
+    /**
+     * 修改
+     */
+    @RequestMapping("/update/sort")
+    //@RequiresPermissions("product:category:update")
+    public R updateBatch(@RequestBody List<CategoryEntity> category){
+        categoryService.updateBatchById(category);
+        return R.ok();
+    }
+
 
     /**
      * 删除

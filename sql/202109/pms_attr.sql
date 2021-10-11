@@ -1,0 +1,1 @@
+ALTER TABLE gulimall_pms.pms_attr ADD value_type BIGINT(20) null;

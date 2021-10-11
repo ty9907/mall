@@ -3,6 +3,7 @@ package com.myself.mall.product.service.impl;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -48,5 +49,20 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
             return category;
         }).collect(Collectors.toList());
         return children;
+    }
+
+    @Override
+    public Long[] selectCatePath(Long catId) {
+        List<Long> cateePathList=new ArrayList<>();
+        cateePathList.add(catId);
+        CategoryEntity cate = this.getById(catId);
+        while(cate.getParentCid()!=0){
+            CategoryEntity newCate = this.getById(cate.getParentCid());
+            cateePathList.add(newCate.getCatId());
+            cate=newCate;
+        }
+        Collections.reverse(cateePathList);
+        Long[] catePath = cateePathList.toArray(new Long[0]);
+        return catePath;
     }
 }
