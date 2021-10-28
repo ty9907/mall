@@ -3,9 +3,12 @@ package com.myself.mall.product.controller;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.myself.mall.product.entity.BrandEntity;
+import com.myself.mall.product.vo.BrandVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +31,20 @@ import com.myself.common.utils.R;
 public class CategoryBrandRelationController {
     @Autowired
     private CategoryBrandRelationService categoryBrandRelationService;
+
+    @GetMapping("/brands/list")
+    public R relationBrandsList(@RequestParam(value = "catId",required = true) Long catId){
+        List<BrandEntity> vos = categoryBrandRelationService.getBrandsByCatId(catId);
+        List<BrandVo> collect = vos.stream().map(item -> {
+            BrandVo vo = new BrandVo();
+            vo.setBrandId(item.getBrandId());
+            vo.setBrandName(item.getName());
+
+            return vo;
+        }).collect(Collectors.toList());
+
+        return R.ok().put("data", collect);
+    }
 
     @GetMapping("/catelog/list")
     public R catelogList(@RequestParam Long brandId){

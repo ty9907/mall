@@ -34,4 +34,8 @@ public class ProductAttrValueServiceImpl extends ServiceImpl<ProductAttrValueDao
         return this.baseMapper.selectList(new LambdaQueryWrapper<ProductAttrValueEntity>().eq(ProductAttrValueEntity::getSpuId, spuId));
     }
 
+    @Override
+    public void saveProductAttr(List<ProductAttrValueEntity> collect) {
+        this.saveBatch(collect);
+    }
 }

@@ -1,0 +1,1 @@
+alter table pms_spu_info_desc modify spu_id bigint(20) auto_increment not null;

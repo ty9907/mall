@@ -11,6 +11,7 @@ import com.myself.mall.product.service.AttrAttrgroupRelationService;
 import com.myself.mall.product.service.AttrService;
 import com.myself.mall.product.service.CategoryService;
 import com.myself.mall.product.vo.AttrGroupRelationVo;
+import com.myself.mall.product.vo.AttrGroupWithAttrsVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -96,6 +97,14 @@ public class AttrGroupController {
 		AttrGroupEntity attrGroup = attrGroupService.getById(attrGroupId);
         attrGroup.setCatelogPath(categoryService.selectCatePath(attrGroup.getCatelogId()));
         return R.ok().put("attrGroup", attrGroup);
+    }
+
+    @GetMapping("/{catelogId}/withattr")
+    public R getAttrGroupWithAttrs(@PathVariable("catelogId") Long catelogId){
+        // 1.查询当前分类下的所有属性分组
+        List<AttrGroupWithAttrsVo> vos = attrGroupService.getAttrGroupWithAttrByCatelogId(catelogId);
+        // 2.查询每个分组的所有信息
+        return R.ok().put("data", vos);
     }
 
     /**
