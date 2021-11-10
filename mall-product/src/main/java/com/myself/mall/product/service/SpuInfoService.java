@@ -23,5 +23,10 @@ public interface SpuInfoService extends IService<SpuInfoEntity> {
     void saveBatchSpuInfo(SpuInfoEntity spuInfoEntity);
 
     void up(Long spuId);
+
+    /**
+     * SPU模糊查询
+     */
+    PageUtils queryPageByCondition(Map<String, Object> params);
 }
 

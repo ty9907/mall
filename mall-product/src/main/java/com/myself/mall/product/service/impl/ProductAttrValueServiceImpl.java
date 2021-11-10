@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -14,6 +16,7 @@ import com.myself.common.utils.Query;
 import com.myself.mall.product.dao.ProductAttrValueDao;
 import com.myself.mall.product.entity.ProductAttrValueEntity;
 import com.myself.mall.product.service.ProductAttrValueService;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service("productAttrValueService")
@@ -36,6 +39,21 @@ public class ProductAttrValueServiceImpl extends ServiceImpl<ProductAttrValueDao
 
     @Override
     public void saveProductAttr(List<ProductAttrValueEntity> collect) {
+        this.saveBatch(collect);
+    }
+
+    @Transactional
+    @Override
+    public void updateSpuAttr(Long spuId, List<ProductAttrValueEntity> entities) {
+        // 1.删除 spuId 之前对应的属性
+        this.baseMapper.delete(new QueryWrapper<ProductAttrValueEntity>().eq("spu_id", spuId));
+
+        // 2.保存页面传过来的数据
+        List<ProductAttrValueEntity> collect = entities.stream().map(entity -> {
+            entity.setSpuId(spuId);
+            entity.setAttrSort(0);
+            return entity;
+        }).collect(Collectors.toList());
         this.saveBatch(collect);
     }
 }
