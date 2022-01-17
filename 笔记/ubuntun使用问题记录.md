@@ -123,10 +123,29 @@ https://docker.mirrors.ustc.edu.cn
 
 
 
-## 4、docker启动mysql指令
+## 4、为普通用户添加docker使用权限
 
 ```shell
-docker run -p 3306:3306 --name mysql -v /mydata/mysql/log:/var/log/mysql -v /mydata/mysql/data:/var/lib/mysql -v /mydata/mysql/conf:/etc/mysql -e MYSQL_ROOT_PASSWORD=root -d mysql:5.7
+sudo groupadd docker #添加docker用户组
+sudo gpasswd -a $USER docker #将登陆用户加入到docker用户组中
+newgrp docker #更新用户组
+
+#或者使用以下命令
+sudo chmod a+rw /var/run/docker.sock
+```
+
+原文链接：[https://blog.csdn.net/u011337602/article/details/104541261](https://blog.csdn.net/u011337602/article/details/104541261)
+
+
+
+## 5、docker启动mysql指令
+
+```shell
+docker run -p 3306:3306 --name mysql \
+-v /mydata/mysql/log:/var/log/mysql \
+-v /mydata/mysql/data:/var/lib/mysql \
+-v /mydata/mysql/conf:/etc/mysql -e MYSQL_ROOT_PASSWORD=root \
+-d mysql:5.7
 ```
 
 启动后修改mysql编码为utf-8
@@ -162,7 +181,7 @@ docker restart mysql
 
 
 
-## 5、docker启动redis指令
+## 6、docker启动redis指令
 
 ```shell
 #默认没有redis.conf文件，直接执行docker run会创建redis.conf文件夹
@@ -181,7 +200,7 @@ appendonly yes
 docker exec -it redis redis-cli
 ```
 
-##  6、docker设置容器自动重启
+##  7、docker设置容器自动重启
 
 ```shell
 docker update mysql --restart=always
@@ -190,5 +209,88 @@ docker update redis --restart=always
 
 
 
+## 8、 Docker安装ElasticSearch
 
+```shell
+docker pull elasticsearch:7.4.2
+docker pull kibana:7.4.2
+
+mkdir -p /mydata/elasticsearch/config
+mkdir -p /mydata/elasticsearch/data
+echo "http.host: 0000">>/mydata/elasticsearch/config/elasticsearch.yml  #创建配置文件
+
+docker run --name elasticsearch -p 9200:9200 -p 9300:9300 \
+-e "discovery.type=single-node" \
+-e ES_JAVA_OPTS="-Xms256m -Xmx512m" \
+-v /mydata/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml \
+-v /mydata/elasticsearch/data:/usr/share/elasticsearch/data \
+-v /mydata/elasticsearch/plugins:/usr/share/elasticsearch/plugins \
+-d elasticsearch:7.4.2
+
+#运行docker镜像时出现以下错误
+docker: Error response from daemon: OCI runtime create failed: container_linux.go:380: starting container process caused: process_linux.go:545: container init caused: rootfs_linux.go:76: mounting "/mydata/elasticsearch/config/elasticsearch.yml" to rootfs at "/usr/share/elasticsearch/config/elasticsearch.yml" caused: mount through procfd: not a directory: unknown: Are you trying to mount a directory onto a file (or vice-versa)? Check if the specified host path exists and is the expected type.
+#原因是elasticsearch.yml被我建成了目录；删除目录，重新生成文件即可运行镜像
+rm -r /mydata/elasticsearch/configelasticsearch.yml/
+touch /mydata/elasticsearch/config/elasticsearch.yml
+
+#使用docker ps -a 发现elastixsearch 状态为退出，原因是 /mydata/elasticsearch 访问失败，为目录添加权限，
+chmod -R 777 /mydata/elasticsearch
+#再次启动elasticsearch
+docker start {imageid}
+```
+
+启动kibana
+
+```shell
+docker run --name kibana -e ELASTICSEARCH_HOSTS=http://192.168.159.128:9200 -p 5601:5601 \
+-d kibana:7.4.2
+```
+
+
+
+## 9、使用vi方向键变为ABCD
+
+由于ubuntu预安装的是tiny版本，所以会导致我们在使用上的产生上述的不便。但是，我们安装了vim的full版本之后，键盘的所有键在vi下就很正常了。
+
+首先，要先卸掉旧版的vi，输入以下命令：
+
+```shell
+sudo apt-get remove vim-common
+```
+
+然后安装full版的vim，输入命令：
+
+```shell
+sudo apt-get install vim
+```
+
+这样安装好了之后，我们在编辑文件的时候依然是使用“vi”命令来启动新装的vim，但是操作起来比tiny更加方便了。
+
+原文链接：[https://www.awaimai.com/262.html](https://www.awaimai.com/262.html)
+
+## 10、ElasticSearch安装ik分词器
+
+```shell
+#分词器版本需要与elasticsearch相同，我的是7.4.2版本
+
+#进入easticsearch目录下的plugin目录，新建ik目录，使用下面指令下载插件，或者使用ftp等方式将下载后的插件上传到ik目录，然后解压
+wget https://github-releases.githubusercontent.com/2993595/19827980-fef3-11e9-8cda-384bc0d9396c?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20211117%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20211117T141929Z&X-Amz-Expires=300&X-Amz-Signature=ad3470f451ba6c521e9b43ca619ee441d1ecbaadf750791e33ae74dfc763f217&X-Amz-SignedHeaders=host&actor_id=53524785&key_id=0&repo_id=2993595&response-content-disposition=attachment%3B%20filename%3Delasticsearch-analysis-ik-7.4.2.zip&response-content-type=application%2Foctet-stream
+```
+
+```shell
+#进入容器内部bin目录下，查看插件，出现ik说明插件安装成功
+docker exec -it ${imageid} /bin/bash
+cd bin/
+elasticsearch-plugin list
+```
+
+## 11、docker启动nginx
+
+````shell
+docker run -p 80:80 --name nginx \
+-v /mydata/nginx/html:/usr/share/nginx/html \
+-v /mydata/nginx//logs:/var/log/nginx \
+-v /mydata/nginx/conf:/etc/nginx \
+-d nginx
+````
 

@@ -66,8 +66,8 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
     @Autowired
     private WareFeignService wareFeignService;
 
-//    @Autowired
-//    private SearchFeignService searchFeignService;
+    @Autowired
+    private SearchFeignService searchFeignService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -140,7 +140,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
                         dufaultImg = img.getImgUrl();
                     }
                 }
-                if(dufaultImg == ""){
+                if(dufaultImg.equals("")){
                     dufaultImg=item.getImages().get(0).getImgUrl();
                 }
                 // 2).基本信息的保存 pms_sku_info
@@ -210,14 +210,14 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         // 1 组装数据 查出当前spuId对应的所有sku信息
         List<SkuInfoEntity> skus = skuInfoService.getSkusBySpuId(spuId);
         // 查询这些sku是否有库存
-        List<Long> skuids = skus.stream().map(sku -> sku.getSkuId()).collect(Collectors.toList());
+        List<Long> skuids = skus.stream().map(SkuInfoEntity::getSkuId).collect(Collectors.toList());
         // 2 封装每个sku的信息
 
         // 3.查询当前sku所有可以被用来检索的规格属性
         // 获取所有的spu商品的id 然后查询这些id中那些是可以被检索的 [数据库中目前 4、5、6、11不可检索]
         List<ProductAttrValueEntity> baseAttrs = attrValueService.baseAttrListForSpu(spuId);
 
-        List<Long> attrIds = baseAttrs.stream().map(attr -> attr.getAttrId()).collect(Collectors.toList());
+        List<Long> attrIds = baseAttrs.stream().map(ProductAttrValueEntity::getAttrId).collect(Collectors.toList());
         // 可检索的id集合
         Set<Long> isSet = new HashSet<>(attrService.selectSearchAttrIds(attrIds));
 
@@ -234,7 +234,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
             // 3.1 发送远程调用 库存系统查询是否有库存
             R hasStock = wareFeignService.getSkuHasStock(skuids);
             // 构造器受保护 所以写成内部类对象
-            stockMap = hasStock.getData(new TypeReference<List<SkuHasStockVo>>(){}).stream().collect(Collectors.toMap(SkuHasStockVo::getSkuId, item -> item.getHasStock()));
+            stockMap = hasStock.getData(new TypeReference<List<SkuHasStockVo>>(){}).stream().collect(Collectors.toMap(SkuHasStockVo::getSkuId, SkuHasStockVo::getHasStock));
             log.warn("服务调用成功" + hasStock);
         } catch (Exception e) {
             log.error("库存服务调用失败: 原因{}",e);
@@ -271,18 +271,18 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         }).collect(Collectors.toList());
 
         // 5.发给ES进行保存  mall-search
-//        R r = searchFeignService.productStatusUp(collect);
-//        if(r.getCode() == 0){
+        R r = searchFeignService.productStatusUp(collect);
+        if(r.getCode() == 0){
             // 远程调用成功
-//            baseMapper.updateSpuStatus(spuId, ProductConstant.StatusEnum.SPU_UP.getCode());
-//        }else{
+            baseMapper.updateSpuStatus(spuId, ProductConstant.StatusEnum.SPU_UP.getCode());
+        }else{
             // 远程调用失败 TODO 接口幂等性 重试机制
             /**
              * Feign 的调用流程  Feign有自动重试机制
              * 1. 发送请求执行
              * 2.
              */
-//        }
+        }
     }
 
     /**

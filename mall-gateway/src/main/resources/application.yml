@@ -60,31 +60,35 @@ spring:
         - id: search_route
           uri: lb://mall-search
           predicates:
-            - Host=search.glmall.com
+            - Host=search.mall.com
         - id: auth_route
           uri: lb://mall-auth-server
           predicates:
-            - Host=auth.glmall.com
+            - Host=auth.mall.com
         - id: seckill_route
           uri: lb://mall-seckill
           predicates:
-            - Host=seckill.glmall.com
+            - Host=seckill.mall.com
         - id: cart_route
           uri: lb://mall-cart
           predicates:
-            - Host=cart.glmall.com
+            - Host=cart.mall.com
         - id: member_route
           uri: lb://mall-member
           predicates:
-            - Host=member.glmall.com
+            - Host=member.mall.com
         - id: order_route
           uri: lb://mall-order
           predicates:
-            - Host=order.glmall.com
+            - Host=order.mall.com
         # 任何以mall.com结尾的域名转发到mall-product
         - id: mall_route
           uri: lb://mall-product
           predicates:
-            - Host=**.glmall.com,glmall.com,item.glmall.com
+            - Host=mall.com,mall.com,item.mall.com
+        - id: search_route
+          uri: lb://mall-search
+          predicates:
+            - Host=search.mall.com,mall.com,item.mall.com
 server:
   port: 88

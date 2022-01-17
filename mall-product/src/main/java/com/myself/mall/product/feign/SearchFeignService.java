@@ -14,9 +14,9 @@ import java.util.List;
  * Description：远程上架商品
  * date：2020/6/8 21:42
  */
-//@FeignClient("mall-search")
+@FeignClient("mall-search")
 public interface SearchFeignService {
 
-//	@PostMapping("/search/save/product")
-//	R productStatusUp(@RequestBody List<SkuEsModel> skuEsModels);
+	@PostMapping("/search/save/product")
+	R productStatusUp(@RequestBody List<SkuEsModel> skuEsModels);
 }

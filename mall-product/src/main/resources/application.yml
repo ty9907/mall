@@ -16,6 +16,15 @@ spring:
   # 指定返回时间的格式化
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
+  thymeleaf:
+    cache: false
+    suffix: .html
+    prefix: classpath:/templates/
+  cache:
+    type: redis
+    redis:
+      key-prefix: cache_
+      time-to-live: 36000
 
 mybatis-plus:
   mapper-locations: classpath:/mapper/**/*.xml
