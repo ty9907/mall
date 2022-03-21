@@ -35,6 +35,12 @@
             <artifactId>mall-common</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring-cloud-starter-alicloud-oss</artifactId>
+                    <groupId>com.alibaba.cloud</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>

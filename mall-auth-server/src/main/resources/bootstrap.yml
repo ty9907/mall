@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: mall-auth-server
+  cloud:
+    nacos:
+      config:
+        server-addr: localhost:8848

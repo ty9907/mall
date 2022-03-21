@@ -1,6 +1,8 @@
 package com.myself.mall.search.service;
 
 
+import com.myself.mall.search.vo.SearchParam;
+import com.myself.mall.search.vo.SearchResult;
 
 /**
  * <p>Title: MasllService</p>
@@ -12,5 +14,5 @@ public interface MallService {
 	/**
 	 * 检索所有参数
 	 */
-//	SearchResult search(SearchParam Param);
+	SearchResult search(SearchParam Param);
 }

@@ -1,6 +1,8 @@
 package com.myself.mall.product.service.impl;
 
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -26,4 +28,10 @@ public class SkuImagesServiceImpl extends ServiceImpl<SkuImagesDao, SkuImagesEnt
         return new PageUtils(page);
     }
 
+    @Override
+    public List<SkuImagesEntity> getImagesBySkuId(Long skuId) {
+
+        SkuImagesDao dao = this.baseMapper;
+        return dao.selectList(new QueryWrapper<SkuImagesEntity>().eq("sku_id", skuId));
+    }
 }

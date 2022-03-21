@@ -25,6 +25,9 @@ spring:
     redis:
       key-prefix: cache_
       time-to-live: 36000
+  redis:
+    host: 192.168.159.128
+    port: 6379
 
 mybatis-plus:
   mapper-locations: classpath:/mapper/**/*.xml
@@ -40,3 +43,9 @@ mybatis-plus:
 logging:
   level:
     com.myself.mall.product: debug
+
+mall:
+  thread:
+    core-size: 20
+    max-size: 200
+    keep-alive-time: 10
