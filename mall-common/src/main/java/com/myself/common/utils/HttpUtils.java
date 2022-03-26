@@ -1,6 +1,7 @@
 package com.myself.common.utils;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -12,19 +13,28 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.conn.ssl.*;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.ssl.SSLContextBuilder;
+import org.apache.http.util.EntityUtils;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.security.KeyManagementException;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
@@ -274,9 +284,11 @@ public class HttpUtils {
     }
 	
 	private static HttpClient wrapClient(String host) {
-		HttpClient httpClient = new DefaultHttpClient();
+//		HttpClient httpClient = new DefaultHttpClient();
+		HttpClient httpClient = HttpClientBuilder.create().build();
 		if (host.startsWith("https://")) {
-			sslClient(httpClient);
+//			sslClient(httpClient);
+			httpClient = createSSLClientDefault();
 		}
 		
 		return httpClient;
@@ -308,4 +320,38 @@ public class HttpUtils {
         	throw new RuntimeException(ex);
         }
     }
+
+	public static CloseableHttpClient createSSLClientDefault() {
+		try {
+			//使用 loadTrustMaterial() 方法实现一个信任策略，信任所有证书
+			SSLContext sslContext = new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
+				// 信任所有
+				public boolean isTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+					return true;
+				}
+			}).build();
+			//NoopHostnameVerifier类:  作为主机名验证工具，实质上关闭了主机名验证，它接受任何
+			//有效的SSL会话并匹配到目标主机。
+			HostnameVerifier hostnameVerifier = NoopHostnameVerifier.INSTANCE;
+			SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslContext, hostnameVerifier);
+			return HttpClients.custom().setSSLSocketFactory(sslsf).build();
+		} catch (KeyManagementException e) {
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} catch (KeyStoreException e) {
+			e.printStackTrace();
+		}
+		return HttpClients.createDefault();
+	}
+
+	public static String parseResponse(HttpResponse httpResponse) throws IOException {
+		HttpEntity entity = httpResponse.getEntity();
+		String result = null;
+		if (entity != null) {
+			result = EntityUtils.toString(entity, "utf-8");
+		}
+		EntityUtils.consume(entity);
+		return result;
+	}
 }
