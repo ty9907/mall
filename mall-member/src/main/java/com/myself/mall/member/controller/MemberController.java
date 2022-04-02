@@ -9,6 +9,7 @@ import com.myself.mall.member.exception.PhoneExistException;
 import com.myself.mall.member.exception.UserNameExistException;
 import com.myself.mall.member.feign.CouponFeignService;
 import com.myself.mall.member.vo.MemberLoginVo;
+import com.myself.mall.member.vo.SocialUser;
 import com.myself.mall.member.vo.UserRegisterVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -123,6 +124,17 @@ public class MemberController {
             return R.ok().setData(memberEntity);
         }else {
             return R.error(BizCodeEnum.LOGINACTT_PASSWORD_ERROR.getCode(), BizCodeEnum.LOGINACTT_PASSWORD_ERROR.getMsg());
+        }
+    }
+
+    @PostMapping("/oauth2/login")
+    public R login(@RequestBody SocialUser socialUser){
+
+        MemberEntity memberEntity = memberService.login(socialUser);
+        if(memberEntity != null){
+            return R.ok().setData(memberEntity);
+        }else {
+            return R.error(BizCodeEnum.SOCIALUSER_LOGIN_ERROR.getCode(), BizCodeEnum.SOCIALUSER_LOGIN_ERROR.getMsg());
         }
     }
 }
