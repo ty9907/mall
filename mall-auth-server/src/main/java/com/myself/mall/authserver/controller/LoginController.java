@@ -66,7 +66,7 @@ public class LoginController {
 			MemberRsepVo rsepVo = r.getData("data", new TypeReference<MemberRsepVo>() {});
 			session.setAttribute(AuthServerConstant.LOGIN_USER, rsepVo);
 			log.info("\n欢迎 [" + rsepVo.getUsername() + "] 登录");
-			return "redirect:http://glmall.com";
+			return "redirect:http://mall.com";
 		}else {
 			HashMap<String, String> error = new HashMap<>();
 			// 获取错误信息
@@ -116,7 +116,7 @@ public class LoginController {
 			Map<String, String> errors = result.getFieldErrors().stream().collect(Collectors.toMap(FieldError::getField, fieldError -> fieldError.getDefaultMessage()));
 			// addFlashAttribute 这个数据只取一次
 			redirectAttributes.addFlashAttribute("errors", errors);
-			return "redirect:http://auth.glmall.com/reg.html";
+			return "redirect:http://auth.mall.com/reg.html";
 		}
 		// 开始注册 调用远程服务
 		// 1.校验验证码

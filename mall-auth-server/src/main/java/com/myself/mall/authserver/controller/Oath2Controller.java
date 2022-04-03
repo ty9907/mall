@@ -70,7 +70,7 @@ public class Oath2Controller {
 //		map.put("client_id", "1294828100");
 //		map.put("client_secret", "a8e8900e15fba6077591cdfa3105af44");
 //		map.put("grant_type", "authorization_code");
-//		map.put("redirect_uri", "http://auth.glmall.com/oauth2.0/weibo/success");
+//		map.put("redirect_uri", "http://auth.mall.com/oauth2.0/weibo/success");
 //		map.put("code", code);
 //		Map<String, String> headers = new HashMap<>();
 //		HttpResponse response = HttpUtils.doPost("https://api.weibo.com", "/oauth2/access_token", "post", headers, null, map);
@@ -90,15 +90,15 @@ public class Oath2Controller {
 //				// 在发卡的时候扩大session作用域 (指定域名为父域名)
 //				// TODO 1.默认发的当前域的session (需要解决子域session共享问题)
 //				// TODO 2.使用JSON的方式序列化到redis
-////				new Cookie("JSESSIONID","").setDomain("glmall.com");
+////				new Cookie("JSESSIONID","").setDomain("mall.com");
 //				session.setAttribute(AuthServerConstant.LOGIN_USER, rsepVo);
 //				// 登录成功 跳回首页
-//				return "redirect:http://glmall.com";
+//				return "redirect:http://mall.com";
 //			}else{
-//				return "redirect:http://auth.glmall.com/login.html";
+//				return "redirect:http://auth.mall.com/login.html";
 //			}
 //		}else{
-//			return "redirect:http://auth.glmall.com/login.html";
+//			return "redirect:http://auth.mall.com/login.html";
 //		}
 //	}
 
@@ -136,7 +136,7 @@ public class Oath2Controller {
 		String user = HttpUtils.parseResponse(userResponse);
 		JSONObject userJson = JSON.parseObject(user);
 		System.out.println(user);
-		return "redirect:http://glmall.com";
+		return "redirect:http://mall.com";
 	}
 
 	/**
@@ -165,6 +165,6 @@ public class Oath2Controller {
 		HttpResponse userResponse = HttpUtils.doGet("https://gitee.com", "/api/v5/user", "", new HashMap<>(),  userParam);
 		String user = HttpUtils.parseResponse(userResponse);
 		System.out.println(user);
-		return "redirect:http://glmall.com";
+		return "redirect:http://mall.com";
 	}
 }
