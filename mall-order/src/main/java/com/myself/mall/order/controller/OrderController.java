@@ -2,14 +2,17 @@ package com.myself.mall.order.controller;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.UUID;
 
 ////import org.apache.shiro.authz.annotation.RequiresPermissions;
+import com.alibaba.fastjson.JSON;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageProperties;
+import org.springframework.amqp.rabbit.connection.CorrelationData;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.*;
 
 import com.myself.mall.order.entity.OrderEntity;
 import com.myself.mall.order.service.OrderService;
@@ -30,6 +33,14 @@ import com.myself.common.utils.R;
 public class OrderController {
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private RabbitTemplate template;
+
+    @Value("${myRabbitmq.MQConfig.eventExchange}")
+    private String eventExchange;
+
+    @Value("${myRabbitmq.MQConfig.createOrder}")
+    private String routingKey;
 
     /**
      * 列表
@@ -87,4 +98,17 @@ public class OrderController {
         return R.ok();
     }
 
+    @GetMapping("/status/{orderSn}")
+    public R getOrderStatus(@PathVariable("orderSn") String orderSn){
+        OrderEntity orderEntity = orderService.getOrderByOrderSn(orderSn);
+
+        return R.ok().setData(orderEntity);
+    }
+
+    @GetMapping("/test/rabitmq")
+    public void rabbitMqTest(){
+        OrderEntity order = new OrderEntity();
+        order.setOrderSn(UUID.randomUUID().toString().replace("-",""));
+        template.convertAndSend(eventExchange,routingKey,order);
+    }
 }

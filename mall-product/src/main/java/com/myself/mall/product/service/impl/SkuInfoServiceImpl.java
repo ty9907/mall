@@ -1,23 +1,22 @@
 package com.myself.mall.product.service.impl;
 
-import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.myself.common.utils.PageUtils;
 import com.myself.common.utils.Query;
-import com.myself.common.utils.R;
 import com.myself.mall.product.dao.SkuInfoDao;
 import com.myself.mall.product.entity.SkuImagesEntity;
 import com.myself.mall.product.entity.SkuInfoEntity;
 import com.myself.mall.product.entity.SpuInfoDescEntity;
 import com.myself.mall.product.service.*;
 import com.myself.mall.product.vo.ItemSaleAttrVo;
-import com.myself.mall.product.vo.SeckillInfoVo;
 import com.myself.mall.product.vo.SkuItemVo;
 import com.myself.mall.product.vo.SpuItemAttrGroup;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
@@ -27,7 +26,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 
-
+@Slf4j
 @Service("skuInfoService")
 public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> implements SkuInfoService {
 
@@ -173,6 +172,7 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
             log.error(e.getMessage(),e);
             return null;
         });
+        CompletableFuture.allOf(ImgageFuture, saleAttrFuture, descFuture, baseAttrFuture).get();
         return skuItemVo;
     }
 }

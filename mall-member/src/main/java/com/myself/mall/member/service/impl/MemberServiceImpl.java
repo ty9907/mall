@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Member;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +29,7 @@ import com.myself.common.utils.Query;
 import com.myself.mall.member.dao.MemberDao;
 import com.myself.mall.member.entity.MemberEntity;
 import com.myself.mall.member.service.MemberService;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service("memberService")

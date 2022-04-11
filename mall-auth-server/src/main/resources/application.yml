@@ -4,3 +4,13 @@ spring:
   redis:
     host: 192.168.159.128
     port: 6379
+
+# Feign 日志局部配置
+feign:
+  client:
+    config:
+      product-service:
+        loggerLevel: BASIC
+        contract: feign.Contract.Default #设置为默认的契约 （还原成原生注解）
+        connectTimeout: 5000 #连接超时时间，默认2s
+        readTimeout: 10000 #请求处理超时时间，默认5s

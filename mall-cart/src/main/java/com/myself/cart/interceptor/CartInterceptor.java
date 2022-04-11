@@ -64,7 +64,7 @@ public class CartInterceptor implements HandlerInterceptor {
 		if(!userInfoTo.isTempUser()){
 			Cookie cookie = new Cookie(CartConstant.TEMP_USER_COOKIE_NAME, userInfoTo.getUserKey());
 			// 设置这个cookie作用域 过期时间
-			cookie.setDomain("6mall.com");
+			cookie.setDomain("mall.com");
 			cookie.setMaxAge(CartConstant.TEMP_USER_COOKIE_TIME_OUT);
 			response.addCookie(cookie);
 		}
